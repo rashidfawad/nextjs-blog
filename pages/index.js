@@ -1,16 +1,33 @@
 import Head from 'next/head'
+import Link from "next/link";
+import {siteTitle} from "../components/layout";
+import Layout from "../components/layout";
+import utilStyles from '../styles/utils.module.css';
+import Date from '../components/date';
 
-export default function Home() {
+import { getSortedPostsData } from '../lib/posts';
+
+function Home({ allPostsData }) {
   return (
     <div className="container">
       <Head>
-        <title>Create Next App</title>
+        <title>{siteTitle}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <section className={utilStyles.headingMd}>
+        <p>We build modern responsive websites</p>
+        <p>This is a sampel website, you'll be building a site like this on {' '}
+          <a href="https://tecksphere.io">Tecksphere</a>
+        </p>
+      </section>
+
       <main>
         <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Read{ ' ' }
+          <Link href={"posts/first-post"}>
+            <a>this page!</a>
+          </Link>
         </h1>
 
         <p className="description">
@@ -46,7 +63,28 @@ export default function Home() {
             </p>
           </a>
         </div>
+
       </main>
+
+      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+        <h2 className={utilStyles.headingLg}>Ahil Khan's Blog</h2>
+
+        <ul className={utilStyles.list}>
+          { allPostsData.map(({id, date, title}) => (
+              <li className={ utilStyles.listItem } key={id}>
+                <Link href={`/posts/${id}`}>
+                  <a>{title}</a>
+                </Link>
+
+                <br />
+
+                <small className={utilStyles.lightText}>
+                  <Date dateString={date} />
+                </small>
+              </li>
+          ))}
+        </ul>
+      </section>
 
       <footer>
         <a
@@ -207,3 +245,15 @@ export default function Home() {
     </div>
   )
 }
+
+export async function getStaticProps() {
+  const allPostsData = getSortedPostsData();
+
+  return {
+    props: {
+      allPostsData
+    }
+  };
+}
+
+export default Home;
